@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101714">
+  <title>Deadlock Lab — Operating Systems</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="rail">
+      <a class="brand" href="#top" aria-label="Deadlock Lab home"><span class="brand-mark">d<span>.</span></span></a>
+      <div class="rail-rule"></div>
+      <a class="rail-link active" href="#workspace" title="Simulator" aria-label="Simulator"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg></a>
+      <a class="rail-link" href="#concepts" title="Concepts" aria-label="Concepts"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 4.6 1.3c-.8 1-2.2 1.2-2.2 2.7M12 16.5h.01"/></svg></a>
+      <div class="rail-bottom"><span class="online-dot"></span><span>LOCAL</span></div>
+    </aside>
+
+    <main id="top" class="main-content">
+      <header class="topbar">
+        <div class="breadcrumb"><span>OS LAB</span><span class="crumb-slash">/</span><strong>RESOURCE MANAGEMENT</strong></div>
+        <div class="topbar-right"><span class="server-indicator"><i></i><span id="server-label">CONNECTING</span></span><span class="topbar-divider"></span><span class="version">SIMULATOR <b>01</b></span></div>
+      </header>
+
+      <section class="intro">
+        <div class="intro-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> OPERATING SYSTEMS · INTERACTIVE MODEL</div>
+          <h1>Deadlock<span class="title-accent">,</span><br><em>under control.</em></h1>
+          <p class="intro-text">Explore how processes compete for limited resources. Detect a deadlock in a live system state, or prevent one before it forms.</p>
+        </div>
+        <div class="intro-art" aria-hidden="true">
+          <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+          <div class="orbit-node node-a">P<span>0</span></div><div class="orbit-node node-b">R<span>A</span></div>
+          <div class="orbit-node node-c">P<span>1</span></div><div class="orbit-node node-d">R<span>B</span></div>
+          <div class="orbit-center"><span>NO</span><b>WAIT</b></div>
+          <svg class="orbit-arrows" viewBox="0 0 240 190"><defs><marker id="arrow" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0 0L5 2.5L0 5Z" fill="#829486"/></marker></defs><path d="M159 36 C188 46 201 63 203 82" marker-end="url(#arrow)"/><path d="M196 116 C184 140 168 151 149 157" marker-end="url(#arrow)"/><path d="M84 155 C58 146 42 130 37 111" marker-end="url(#arrow)"/><path d="M44 76 C54 51 72 39 91 33" marker-end="url(#arrow)"/></svg>
+        </div>
+      </section>
+
+      <section id="workspace" class="workspace">
+        <div class="workspace-head">
+          <div><div class="section-kicker">SIMULATION WORKSPACE <span class="kicker-line"></span></div><h2>System state</h2></div>
+          <div class="scenario-select"><label for="scenario">LOAD SCENARIO</label><select id="scenario"><option value="safe">Classic safe state</option><option value="deadlock">Circular wait</option><option value="prevention">Prevention sandbox</option></select><span class="select-chevron">⌄</span></div>
+        </div>
+
+        <div class="stat-grid">
+          <article class="stat-card"><div class="stat-label">PROCESSES <span class="stat-glyph">⌘</span></div><div class="stat-value" id="process-count">05</div><div class="stat-foot">active in system</div></article>
+          <article class="stat-card"><div class="stat-label">RESOURCE TYPES <span class="stat-glyph">◈</span></div><div class="stat-value" id="resource-count">03</div><div class="stat-foot">distinct classes</div></article>
+          <article class="stat-card state-card"><div class="stat-label">CURRENT STATUS <span class="status-pulse"></span></div><div class="state-value"><span class="status-mark" id="status-mark">✓</span><strong id="state-label">READY TO CHECK</strong></div><div class="stat-foot" id="state-foot">Run detection to inspect the state</div></article>
+          <div class="stat-actions"><button class="text-button" id="remove-process" title="Remove last process">− Process</button><button class="text-button" id="add-process">+ Process</button><button class="text-button" id="remove-resource" title="Remove last resource">− Resource</button><button class="text-button" id="add-resource">+ Resource</button></div>
+        </div>
+
+        <div class="mode-row">
+          <div class="mode-tabs" role="tablist" aria-label="Simulation mode"><button class="mode-tab selected" id="tab-detect" role="tab" aria-selected="true" data-mode="detect"><span class="tab-index">01</span> Deadlock detection</button><button class="mode-tab" id="tab-prevent" role="tab" aria-selected="false" data-mode="prevent"><span class="tab-index">02</span> Deadlock prevention</button></div>
+          <button class="reset-button" id="reset-state"><span>↺</span> Reset scenario</button>
+        </div>
+
+        <div class="work-grid">
+          <section class="matrix-panel">
+            <div class="panel-heading"><div><div class="panel-overline">INPUT · RESOURCE ALLOCATION</div><h3>Allocation matrix</h3></div><span class="panel-tag">EDITABLE</span></div>
+            <p class="panel-hint">Instances currently held by each process.</p>
+            <div class="table-scroll"><table id="allocation-table" class="matrix-table"></table></div>
+            <div class="matrix-subhead"><span>AVAILABLE INSTANCES</span><span class="subhead-note">free in system</span></div>
+            <div id="available-fields" class="available-fields"></div>
+          </section>
+
+          <section class="matrix-panel request-panel">
+            <div class="panel-heading"><div><div class="panel-overline">INPUT · PENDING REQUESTS</div><h3>Request matrix</h3></div><span class="panel-tag">EDITABLE</span></div>
+            <p class="panel-hint">Outstanding resource needs for each process.</p>
+            <div class="table-scroll"><table id="request-table" class="matrix-table"></table></div>
+            <div id="prevention-controls" class="prevention-controls hidden">
+              <div class="request-form-head"><div><div class="panel-overline">PREVENTION POLICY</div><h4>Request a resource bundle</h4></div><span class="policy-chip">NO HOLD &amp; WAIT</span></div>
+              <p class="control-copy">A process may request a bundle only when it holds no resources. The system grants the whole bundle at once or leaves it waiting.</p>
+              <div class="request-form"><label class="process-picker"><span>PROCESS</span><select id="request-process"></select></label><div class="request-inputs-wrap"><span class="request-input-caption">REQUEST INSTANCES</span><div id="request-inputs" class="request-inputs"></div></div></div>
+              <div class="prevention-buttons"><button class="primary-button" id="submit-request">Submit bundle <span>↗</span></button><button class="release-button" id="release-resources">Release all</button></div>
+            </div>
+            <div id="detect-controls" class="detect-controls"><span class="detect-note"><span class="detect-note-mark">↳</span> The backend checks whether each process can finish with the currently available resources.</span><button class="primary-button" id="run-detection">Run detection <span>↗</span></button></div>
+          </section>
+        </div>
+
+        <section class="result-panel" id="result-panel" aria-live="polite">
+          <div class="result-main"><div class="result-icon" id="result-icon">◎</div><div class="result-text"><div class="panel-overline" id="result-overline">ANALYSIS OUTPUT</div><h3 id="result-title">Ready when you are</h3><p id="result-copy">Run the detector to trace how the system can complete.</p></div></div>
+          <div class="result-detail" id="result-detail"><span class="detail-placeholder">Your execution trace will appear here.</span></div>
+        </section>
+
+        <section id="concepts" class="concepts">
+          <div class="concept-heading"><div class="section-kicker">THE CORE IDEA <span class="kicker-line"></span></div><h2>Two ways to stay safe.</h2></div>
+          <div class="concept-grid"><article class="concept-card"><span class="concept-number">01 / DETECT</span><h3>Find it after it happens.</h3><p>Compare each process's outstanding request with the resources currently available. If no unfinished process can proceed, the remaining processes are deadlocked.</p><div class="formula">REQUEST<sub>i</sub> ≤ WORK <span>→</span> release ALLOCATION<sub>i</sub></div></article><article class="concept-card"><span class="concept-number">02 / PREVENT</span><h3>Break hold-and-wait.</h3><p>Require a process to request its complete resource bundle while holding nothing. It either receives the entire bundle or waits without tying up resources.</p><div class="formula">HOLDING = 0 <span>→</span> request atomically</div></article></div>
+          <div class="footnote"><span>DEADLOCK LAB</span><span>A small operating systems playground <i>·</i> powered by C</span></div>
+        </section>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
